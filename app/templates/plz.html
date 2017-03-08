@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>PLZ V3.18</title>
+    <script>
+        var $ = function (x) {
+            return document.getElementById(x);
+        }
+
+        var row = 10;      //10
+        var col = 5;      //5
+        var bookRange = 6265;
+
+        var pageIndex = 1;
+        var bookIndex = 1;
+        var page = "";
+        var book = "";
+
+        var clickNext = function (val) {
+            if (bookIndex == 1 && val == -1 || bookIndex == bookRange && val == 1)
+                return;
+
+            bookIndex += val;
+
+            setImageTable();
+        }
+
+        var adjust = function () {
+            if (pageIndex < 10) {
+                page = "000" + pageIndex;
+            }
+            else if (pageIndex < 100) {
+                page = "00" + pageIndex;
+            }
+            else if (pageIndex < 1000) {
+                page = "0" + pageIndex;
+            }
+
+            if (bookIndex < 10) {
+                book = "00" + bookIndex;
+            }
+            else if (bookIndex < 100) {
+                book = "0" + bookIndex;
+            }
+            else {
+                book = "" + bookIndex;
+            }
+        }
+
+        var creatImageTable = function () {
+            var container = $("container");
+            for (var i = 0; i < row; i++) {
+                var diver = document.createElement("div");
+                for (var j = 0; j < col; j++) {
+                    var index = i * col + j + 1;
+                    var image = document.createElement("img");
+                    image.id = "image_" + index;
+                    image.src = "";
+                    diver.appendChild(image);
+                }
+                container.appendChild(diver);
+            }
+
+            $("JmpLabel").innerHTML = "跳转(" +"1-"+ bookRange + ")";
+            setImageTable();
+        }
+
+        var setImageTable = function () {
+            for (var i = 0; i < row; i++) {
+                for (var j = 0; j < col; j++) {
+                    var index = i * col + j + 1;
+                    adjust();
+                    var str = "http://db.sido.keio.ac.jp/kanseki/flipping/007075-" + book + "/007075-" + book + "/assets/flash/pages/page" + page + "_l.jpg?rnd=6B9C70D63C9D11DFA0D46B6255D89593";
+                    var image = $("image_" + index);
+                    image.src = str;
+                    ++pageIndex;
+                }
+            }
+            pageIndex = 1;
+            var info = "(Tips:图片右键另存为 or 右键点击空白处选择迅雷下载所有链接（如果你装了迅雷的话）)<br/>";
+            info += "第 " + bookIndex + " 册 <br/>";
+            $("info").innerHTML = info;
+        }
+
+        var Jump = function () {
+            try {
+                var str = $("Jmp").value;
+                var j = parseInt(str);
+
+                if (str === "") {
+                    alert("请输入页码！");
+                    return;
+                }
+                else if (j <= 0 || j > bookRange) {
+                    alert("范围为（1-" + bookRange + "）");
+                    return;
+                }
+                bookIndex = j;
+                setImageTable();
+            }
+            catch (e) {
+                alert("@@@@@");
+            }
+        }
+    </script>
+
+    <style>
+        button {
+            width: 100px;
+            height: 30px;
+            font-size: 18px;
+            cursor: pointer;
+            /*background: lightgreen;*/
+        }
+
+        img {
+            width: 250px;
+            background-color: lightblue;
+            margin-right: 3px;
+        }
+
+        input {
+            height: 20px;
+        }
+
+        a {
+            font-size: 18px;            
+        }
+        a.label{
+            font-size: 20px;
+            color: orangered;
+            cursor: pointer;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .header {
+            font-size: 34px;
+            color: white;
+            text-align: center;
+        }
+
+        #header {
+            padding-bottom: 2px;
+            padding-top: 2px;
+            background-color: darkcyan;
+        }
+
+        #ctrl {
+            text-align: center;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        #container {
+            width: auto;
+            height: auto;
+            border: 2px solid black;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body onload="creatImageTable()" onselectstart="return false">
+    <div id="header">
+        <h1 class="header">日本毗卢藏下载(V3.18)</h1>
+    </div>
+    <div id="ctrl">
+        <h1 id="info">info</h1>
+        <button onclick="clickNext(-1)">上一册</button>
+        <a id="JmpLabel"></a>
+        <input type="number" id="Jmp" value=""></input>
+        <a class="label" onclick="Jump()"><b>GO</b></a>
+        <button onclick="clickNext(1)">下一册</button>
+    </div>
+    <div id="container">
+    </div>
+</body>
+
+</html>
